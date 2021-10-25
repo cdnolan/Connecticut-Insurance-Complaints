@@ -1,0 +1,109 @@
+---
+title: "Connecticut Insurance Complaints 2015-2021"
+author: "Cliff Nolan"
+date: "10/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(gtsummary)
+library(tidyverse)
+library(lubridate)
+```
+
+### Task
+
+This analysis seeks to identify trends in customer complaints made against insurance companies from 2018 to 2021 in Connecticut in order to create suggestions to improve customer satisfaction and retention.
+
+
+```{r cleaning, echo=FALSE}
+#Importing dataset
+Insurance_Company_Complaints <- read.csv('C:/Users/Public/Public Data/Capstone Project/Insurance_Company_Complaints.csv')
+
+#Creating column 'OpenedNew' in mm/dd/yy format from 'Opened' in mm/dd/yyyy
+Insurance_Company_Complaints$OpenedNew <- paste(
+  substr(Insurance_Company_Complaints$Opened, 1, 6),
+  substr(Insurance_Company_Complaints$Opened, 9, 10),
+  sep = ''
+)
+
+#Casting 'OpenedNew' as 'date' datatype
+Insurance_Company_Complaints$OpenedNew <- as.Date(
+  Insurance_Company_Complaints$OpenedNew, "%m/%d/%y")
+
+#Creating column 'ClosedNew' in mm/dd/yy format from 'Closed' in mm/dd/yyyy
+Insurance_Company_Complaints$ClosedNew <- paste(
+  substr(Insurance_Company_Complaints$Closed, 1, 6),
+  substr(Insurance_Company_Complaints$Closed, 9, 10),
+  sep = ''
+)
+
+#Casting 'ClosedNew' as 'date' datatype
+Insurance_Company_Complaints$ClosedNew <- as.Date(
+  Insurance_Company_Complaints$ClosedNew, "%m/%d/%y")
+
+#Creating table 'complaints' filtered for cleaning purposes
+complaints <- filter(
+  Insurance_Company_Complaints,
+  Insurance_Company_Complaints$SubReason != 'null' & #including only complaints with a SubReason
+  Insurance_Company_Complaints$Coverage != 'null'& #including only complaints with a Coverage Type
+  Insurance_Company_Complaints$Status == 'Closed'& #including only closed complaints
+  Insurance_Company_Complaints$OpenedNew >= as.Date('2018-01-01') #including only complaints from 2018 onward
+  )
+```
+
+### Narrowing Focus
+
+Looking at the reasons for complaints, we can see that the majority of complaints are alleging unfair claims practices, so we will narrow our focus to those.
+
+```{r graph_reasons, echo=FALSE}
+ggplot(data = complaints) +
+  geom_bar(mapping = aes(
+    x = Reason,
+    fill = Reason)) +
+  theme(
+    axis.text.x = element_text(
+      angle = 90), legend.position = 'none') + 
+  coord_flip()
+
+```
+
+
+Of those, our four largest sub-reasons are unsatisfactory settlement, denial of claim, claim procedure, and claim delays
+
+### 
+
+```{r graph_subreasons, echo=FALSE}
+ggplot(data = filter(complaints, Reason == 'Unfair Claims Practice')) +
+  geom_bar(mapping = aes(
+    x = SubReason,
+    fill = SubReason
+    )) +
+  theme(
+    axis.text.x = element_text(
+      angle = 90), legend.position = 'none') + 
+  coord_flip(ylim = c(1000, 3000)) 
+```
+```{r graph_conclusions, echo=FALSE}
+complaints_filtered <- filter(complaints,
+                       ((SubReason == 'Unsatisfactory Settlement')|
+                          (SubReason == 'Denial of Claim')|
+                          (SubReason == 'Claim Procedure')|
+                          (SubReason == 'Claim Delays'))
+                     )
+
+ggplot(data = complaints_filtered) +
+  geom_bar(mapping = aes(
+    x = Conclusion,
+    fill = Conclusion
+    )) +
+  facet_wrap(~SubReason) +
+  theme(
+    axis.text.x = element_blank(), 
+    legend.position = 'bottom',
+    legend.title = element_blank() 
+    )
+```
+
+While a large portion of these complaints are unjustified, they still can provide insight into customer perceptions.

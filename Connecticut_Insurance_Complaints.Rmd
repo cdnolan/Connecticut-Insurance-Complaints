@@ -13,6 +13,7 @@ library(dplyr)
 library(gtsummary)
 library(tidyverse)
 library(lubridate)
+library(here)
 ```
 
 ### Task
@@ -21,10 +22,9 @@ This analysis seeks to identify trends in customer complaints made against insur
 <br /><br />This data was obtained from the [Connecticut Open Data website](https://data.ct.gov/Business/Insurance-Company-Complaints-Resolutions-Status-an/t64r-mt64) on October 19, 2021. Dates before January, 1, 2018 are filtered out as part of the cleaning process.
 
 
-```{r cleaning, echo=FALSE}
+```{r cleaning, include=FALSE, echo=FALSE}
 #Imports dataset
-Insurance_Company_Complaints <- read.csv(
-  'C:/Users/Public/Public Data/Capstone Project/Insurance_Company_Complaints.csv')
+Insurance_Company_Complaints <- read_csv("Data/Insurance_Company_Complaints.csv")
 
 #Creates column 'OpenedNew' in mm/dd/yy format from 'Opened' in mm/dd/yyyy
 Insurance_Company_Complaints$OpenedNew <- paste(
@@ -92,7 +92,7 @@ ggplot(data = filter(complaints, Reason == 'Unfair Claims Practice')) +
     legend.position = 'none', #removes legend
     plot.title = element_text(hjust = 0.5) #centers title
     ) + 
-  coord_flip(ylim = c(1000, 3000)) + #restricts the axis to only show 1000-3000
+  coord_flip(ylim = c(550, 2500)) + #restricts the axis to only show bars for subreasons with over 500 counts
   ggtitle("Unfair Claims Practice Complaint Sub-Reasons")+
   ylab('Number of Complaints')+
   xlab('Sub-Reason')

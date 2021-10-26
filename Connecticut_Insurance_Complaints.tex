@@ -1,0 +1,105 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\title{Connecticut Insurance Complaints 2015-2021}
+\author{Cliff Nolan}
+\date{10/22/2021}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Connecticut Insurance Complaints 2015-2021},
+  pdfauthor={Cliff Nolan},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\begin{document}
+\maketitle
+
+\hypertarget{task}{%
+\subsubsection{Task}\label{task}}
+
+This analysis seeks to identify trends in customer complaints made
+against insurance companies from 2018 to 2021 in Connecticut in order to
+create suggestions to improve customer satisfaction and retention.This
+data was obtained from the
+\href{https://data.ct.gov/Business/Insurance-Company-Complaints-Resolutions-Status-an/t64r-mt64}{Connecticut
+Open Data website} on October 19, 2021
+
+\hypertarget{narrowing-focus}{%
+\subsubsection{Narrowing Focus}\label{narrowing-focus}}
+
+The majority of complaints are alleging unfair claims practices. Of
+those, the four largest sub-reasons are unsatisfactory settlement,
+denial of claim, claim procedure, and claim delays.
+
+\includegraphics{Connecticut_Insurance_Complaints_files/figure-latex/graph_reasons-1.pdf}
+
+\hypertarget{section}{%
+\subsubsection{}\label{section}}
+
+\includegraphics{Connecticut_Insurance_Complaints_files/figure-latex/graph_subreasons-1.pdf}
+When looking at the conclusions reached for these claims, we can see
+that unjustified claims occur most frequently. This is true for all of
+the largest sub-reason groups. In all but one (claim delays), the
+second-most frequent result is that the customer is given further
+information. This presents an opportunity for improvement as their
+dissatisfaction is based on their perception. These customers have
+complaints whether or not they were actually treated unfairly.
+\includegraphics{Connecticut_Insurance_Complaints_files/figure-latex/graph_conclusions-1.pdf}
+
+\end{document}

@@ -1,13 +1,14 @@
 ---
 title: "Connecticut Insurance Complaints 2018-2021"
 author: "Cliff Nolan"
-date: "10/22/2021"
+date: "10/26/2021"
 output:
   html_document: default
   pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
+#Loading libraries used in analysis
 library(dplyr)
 library(gtsummary)
 library(tidyverse)
@@ -21,33 +22,33 @@ This analysis seeks to identify trends in customer complaints made against insur
 
 
 ```{r cleaning, echo=FALSE}
-#Importing dataset
+#Imports dataset
 Insurance_Company_Complaints <- read.csv(
   'C:/Users/Public/Public Data/Capstone Project/Insurance_Company_Complaints.csv')
 
-#Creating column 'OpenedNew' in mm/dd/yy format from 'Opened' in mm/dd/yyyy
+#Creates column 'OpenedNew' in mm/dd/yy format from 'Opened' in mm/dd/yyyy
 Insurance_Company_Complaints$OpenedNew <- paste(
   substr(Insurance_Company_Complaints$Opened, 1, 6),
   substr(Insurance_Company_Complaints$Opened, 9, 10),
   sep = ''
 )
 
-#Casting 'OpenedNew' as 'date' datatype
+#Casts 'OpenedNew' as 'date' datatype
 Insurance_Company_Complaints$OpenedNew <- as.Date(
   Insurance_Company_Complaints$OpenedNew, "%m/%d/%y")
 
-#Creating column 'ClosedNew' in mm/dd/yy format from 'Closed' in mm/dd/yyyy
+#Creates column 'ClosedNew' in mm/dd/yy format from 'Closed' in mm/dd/yyyy
 Insurance_Company_Complaints$ClosedNew <- paste(
   substr(Insurance_Company_Complaints$Closed, 1, 6),
   substr(Insurance_Company_Complaints$Closed, 9, 10),
   sep = ''
 )
 
-#Casting 'ClosedNew' as 'date' datatype
+#Casts 'ClosedNew' as 'date' datatype
 Insurance_Company_Complaints$ClosedNew <- as.Date(
   Insurance_Company_Complaints$ClosedNew, "%m/%d/%y")
 
-#Creating table 'complaints' filtered for cleaning purposes
+#Creates table 'complaints' filtered for cleaning purposes
 complaints <- filter(
   Insurance_Company_Complaints,
   Insurance_Company_Complaints$SubReason != 'null' & #including only complaints with a SubReason
@@ -62,13 +63,15 @@ complaints <- filter(
 The majority of complaints are alleging unfair claims practices. Of those, the four largest sub-reasons are unsatisfactory settlement, denial of claim, claim procedure, and claim delays.
 
 ```{r graph_reasons, echo=FALSE}
+#Creates graph comparing counts of the different reasons 
 ggplot(data = complaints) +
   geom_bar(mapping = aes(
     x = Reason,
-    fill = Reason)) +
+    fill = Reason
+    )) +
   theme(
-    legend.position = 'none',
-    plot.title = element_text(hjust = 0.5)
+    legend.position = 'none', #removes legend
+    plot.title = element_text(hjust = 0.5) #centers the title
     ) + 
   coord_flip()+
   ggtitle("Reasons for Complaint")+
@@ -76,55 +79,54 @@ ggplot(data = complaints) +
   xlab('Reason')
 
 ```
-
+<br /><br />
 ```{r graph_subreasons, echo=FALSE}
-ggplot(
-  data = filter(
-    complaints, Reason == 'Unfair Claims Practice')) +
+#Creates graph comparing subreasons within 'Unfair Claims Practice'
+ggplot(data = filter(complaints, Reason == 'Unfair Claims Practice')) +
   geom_bar(
     mapping = aes(
     x = SubReason,
     fill = SubReason
     )) +
   theme(
-    legend.position = 'none',
-    plot.title = element_text(hjust = 0.5)
+    legend.position = 'none', #removes legend
+    plot.title = element_text(hjust = 0.5) #centers title
     ) + 
-  coord_flip(ylim = c(1000, 3000)) +
+  coord_flip(ylim = c(1000, 3000)) + #restricts the axis to only show 1000-3000
   ggtitle("Unfair Claims Practice Complaint Sub-Reasons")+
   ylab('Number of Complaints')+
   xlab('Sub-Reason')
 ```
-<br /><br />When looking at the conclusions reached for these claims, we can see that unjustified claims occur most frequently. This is true for all of the largest sub-reason groups. In all but one (claim delays), the second-most frequent result is that the customer is given further information.<br /><br />
+<br /><br /><br /><br />When looking at the conclusions reached for these claims, we can see that unjustified claims occur most frequently. This is true for all of the largest sub-reason groups. In all but one (claim delays), the second-most frequent result is that the customer is given further information.<br /><br />
 
 ```{r graph_conclusions, echo=FALSE}
+#Creates a table of only the subreasons with the most complaints
 complaints_filtered <- filter(complaints,
                        ((SubReason == 'Unsatisfactory Settlement')|
                           (SubReason == 'Denial of Claim')|
                           (SubReason == 'Claim Procedure')|
                           (SubReason == 'Claim Delays'))
                      )
-
+#Creates a graph of the filtered table, comparing conclusions of complaints
 ggplot(
   data = complaints_filtered) +
   geom_bar(mapping = aes(
     x = Conclusion,
     fill = Conclusion
     )) +
-  facet_wrap(~SubReason) +
+  facet_wrap(~SubReason) + #breaks data up into sub-graphs for each subreason
   theme(
-    axis.text.x = element_blank(), 
+    axis.text.x = element_blank(), #removes the labels on the x axis
     legend.position = 'bottom',
     legend.title = element_blank(),
-    plot.title = element_text(hjust = 0.5) 
+    plot.title = element_text(hjust = 0.5) #centers the title
     )+
   ggtitle("Complaint Conclusions by Sub-Reason")+
   xlab('Complaint Conclusion')+
   ylab('Number of Complaints')
 ```
+<br /><br /><br />
 
-
-<br />
 ### Conclusions
 <br />Customers have complaints whether or not they were actually treated unfairly. Their complaints are based on their perception. This is shown most clearly in the complaints about claim delays and denial of claims, where the number of unjustified complaints is more than triple the number of justified ones.This presents an opportunity to improve customer satisfaction. Based on these findings, an insurer could improve customer satisfaction by taking proactive steps to increase communication and set clear expectations. This could be in the form of automated updates on pending claims, stating a clear timeline for claim processing, or providing customers with a clear summary of what their policy does and does not cover.<br />
 <br />This analysis is limited to the publicly available data of complaints and could be improved with internal data from insurers on the customers with complaints. It assumes a negative correlation between customer complaints and customer retention.<br />

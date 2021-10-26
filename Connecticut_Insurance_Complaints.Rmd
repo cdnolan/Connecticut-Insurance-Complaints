@@ -1,8 +1,10 @@
 ---
-title: "Connecticut Insurance Complaints 2015-2021"
+title: "Connecticut Insurance Complaints 2018-2021"
 author: "Cliff Nolan"
 date: "10/22/2021"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -15,11 +17,13 @@ library(lubridate)
 ### Task
 
 This analysis seeks to identify trends in customer complaints made against insurance companies from 2018 to 2021 in Connecticut in order to create suggestions to improve customer satisfaction and retention.
+<br /><br />This data was obtained from the [Connecticut Open Data website](https://data.ct.gov/Business/Insurance-Company-Complaints-Resolutions-Status-an/t64r-mt64) on October 19, 2021. Dates before January, 1, 2018 are filtered out as part of the cleaning process.
 
 
 ```{r cleaning, echo=FALSE}
 #Importing dataset
-Insurance_Company_Complaints <- read.csv('C:/Users/Public/Public Data/Capstone Project/Insurance_Company_Complaints.csv')
+Insurance_Company_Complaints <- read.csv(
+  'C:/Users/Public/Public Data/Capstone Project/Insurance_Company_Complaints.csv')
 
 #Creating column 'OpenedNew' in mm/dd/yy format from 'Opened' in mm/dd/yyyy
 Insurance_Company_Complaints$OpenedNew <- paste(
@@ -53,9 +57,9 @@ complaints <- filter(
   )
 ```
 
-### Narrowing Focus
+### Analysis
 
-Looking at the reasons for complaints, we can see that the majority of complaints are alleging unfair claims practices, so we will narrow our focus to those.
+The majority of complaints are alleging unfair claims practices. Of those, the four largest sub-reasons are unsatisfactory settlement, denial of claim, claim procedure, and claim delays.
 
 ```{r graph_reasons, echo=FALSE}
 ggplot(data = complaints) +
@@ -63,28 +67,36 @@ ggplot(data = complaints) +
     x = Reason,
     fill = Reason)) +
   theme(
-    axis.text.x = element_text(
-      angle = 90), legend.position = 'none') + 
-  coord_flip()
+    legend.position = 'none',
+    plot.title = element_text(hjust = 0.5)
+    ) + 
+  coord_flip()+
+  ggtitle("Reasons for Complaint")+
+  ylab('Number of Complaints')+
+  xlab('Reason')
 
 ```
 
-
-Of those, our four largest sub-reasons are unsatisfactory settlement, denial of claim, claim procedure, and claim delays
-
-### 
-
 ```{r graph_subreasons, echo=FALSE}
-ggplot(data = filter(complaints, Reason == 'Unfair Claims Practice')) +
-  geom_bar(mapping = aes(
+ggplot(
+  data = filter(
+    complaints, Reason == 'Unfair Claims Practice')) +
+  geom_bar(
+    mapping = aes(
     x = SubReason,
     fill = SubReason
     )) +
   theme(
-    axis.text.x = element_text(
-      angle = 90), legend.position = 'none') + 
-  coord_flip(ylim = c(1000, 3000)) 
+    legend.position = 'none',
+    plot.title = element_text(hjust = 0.5)
+    ) + 
+  coord_flip(ylim = c(1000, 3000)) +
+  ggtitle("Unfair Claims Practice Complaint Sub-Reasons")+
+  ylab('Number of Complaints')+
+  xlab('Sub-Reason')
 ```
+<br /><br />When looking at the conclusions reached for these claims, we can see that unjustified claims occur most frequently. This is true for all of the largest sub-reason groups. In all but one (claim delays), the second-most frequent result is that the customer is given further information.<br /><br />
+
 ```{r graph_conclusions, echo=FALSE}
 complaints_filtered <- filter(complaints,
                        ((SubReason == 'Unsatisfactory Settlement')|
@@ -93,7 +105,8 @@ complaints_filtered <- filter(complaints,
                           (SubReason == 'Claim Delays'))
                      )
 
-ggplot(data = complaints_filtered) +
+ggplot(
+  data = complaints_filtered) +
   geom_bar(mapping = aes(
     x = Conclusion,
     fill = Conclusion
@@ -102,8 +115,19 @@ ggplot(data = complaints_filtered) +
   theme(
     axis.text.x = element_blank(), 
     legend.position = 'bottom',
-    legend.title = element_blank() 
-    )
+    legend.title = element_blank(),
+    plot.title = element_text(hjust = 0.5) 
+    )+
+  ggtitle("Complaint Conclusions by Sub-Reason")+
+  xlab('Complaint Conclusion')+
+  ylab('Number of Complaints')
 ```
 
-While a large portion of these complaints are unjustified, they still can provide insight into customer perceptions.
+
+<br />
+### Conclusions
+<br />Customers have complaints whether or not they were actually treated unfairly. Their complaints are based on their perception. This is shown most clearly in the complaints about claim delays and denial of claims, where the number of unjustified complaints is more than triple the number of justified ones.This presents an opportunity to improve customer satisfaction. Based on these findings, an insurer could improve customer satisfaction by taking proactive steps to increase communication and set clear expectations. This could be in the form of automated updates on pending claims, stating a clear timeline for claim processing, or providing customers with a clear summary of what their policy does and does not cover.<br />
+<br />This analysis is limited to the publicly available data of complaints and could be improved with internal data from insurers on the customers with complaints. It assumes a negative correlation between customer complaints and customer retention.<br />
+<br />
+
+
